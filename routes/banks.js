@@ -102,8 +102,18 @@ router.get("/peers", passport.authenticate('jwt', {session: false}), function (r
     }
 });
 
+//get all transactions
+router.get('/transactions', passport.authenticate('jwt', {session: false}), function (req, res) {
 
-router.get("/transactions", passport.authenticate('jwt', {session: false}), function (req, res) {
+    console.log(req.user);
+    Bank.findById(req.user._id, function (err, bank) {
+        if (err)
+            res.send(err);
+        res.json(bank.transactions);
+    });
+});
+
+router.get("/transactions-corda", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
         var url = global.HOST + ":" + req.user.port + global.API + "vault";
 

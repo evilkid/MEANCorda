@@ -13,7 +13,7 @@
         $stateProvider
             .state('transactions', {
                 url: '/transactions',
-                template : '<ui-view  autoscroll="true" autoscroll-body-top></ui-view>',
+                template: '<ui-view  autoscroll="true" autoscroll-body-top></ui-view>',
                 abstract: true,
                 title: 'Transactions',
                 sidebarMeta: {
@@ -52,6 +52,7 @@
             .state('transactions.history', {
                 url: '/history',
                 templateUrl: 'app/pages/transactions/history/history.html',
+                controller: 'HistoryCtrl',
                 title: 'History',
                 sidebarMeta: {
                     order: 500
