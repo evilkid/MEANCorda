@@ -39,7 +39,6 @@ var jwtOptions = {
 };
 
 var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
-    console.log('payload received', jwt_payload);
     // usually this would be a database call:
 
     Bank.findOne({_id: jwt_payload._id}, function (err, bank) {
@@ -71,7 +70,6 @@ app.get("/me", passport.authenticate('jwt', {session: false}), function (req, re
 
 
 app.get("/login", function (req, res) {
-    console.log(req.user);
     if (req.user) {
         res.redirect('/');
     } else {
@@ -102,7 +100,7 @@ app.use(function (err, req, res, next) {
 });
 
 //global variables
-global.HOST = "http://localhost";
+global.HOST = "http://34.248.4.27";
 global.API = "/api/example/";
 
 

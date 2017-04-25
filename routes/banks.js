@@ -5,6 +5,9 @@ var bycrypt = require("bcrypt-nodejs");
 
 var request = require('request');
 
+var async = require('async');
+
+
 var Bank = mongoose.model('banks');
 var jwt = require('jsonwebtoken');
 var passport = require("passport");
@@ -48,17 +51,19 @@ router.post('/login', function (req, res, next) {
 
 router.get("/identity", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
-        var url = global.HOST + ":" + req.user.port + global.API + "identity";
 
-        console.log(url);
-        request.get(url, function (err, response, body) {
+        getWebservice(req.user.port, "identity", res);
+        /*var url = global.HOST + ":" + req.user.port + global.API + "identity";
 
-            if (err) {
-                res.json(err);
-            } else {
-                res.json(JSON.parse(body));
-            }
-        });
+         console.log(url);
+         request.get(url, function (err, response, body) {
+
+         if (err) {
+         res.json(err);
+         } else {
+         res.json(JSON.parse(body));
+         }
+         });*/
     } else {
         console.log("port not found");
     }
@@ -67,17 +72,20 @@ router.get("/identity", passport.authenticate('jwt', {session: false}), function
 
 router.get("/balance", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
-        var url = global.HOST + ":" + req.user.port + global.API + "balance";
 
-        console.log(url);
-        request.get(url, function (err, response, body) {
+        getWebservice(req.user.port, "balance", res);
 
-            if (err) {
-                res.json(err);
-            } else {
-                res.json(JSON.parse(body));
-            }
-        });
+        /*var url = global.HOST + ":" + req.user.port + global.API + "balance";
+
+         console.log(url);
+         request.get(url, function (err, response, body) {
+
+         if (err) {
+         res.json(err);
+         } else {
+         res.json(JSON.parse(body));
+         }
+         });*/
     } else {
         console.log("port not found");
     }
@@ -86,17 +94,19 @@ router.get("/balance", passport.authenticate('jwt', {session: false}), function 
 
 router.get("/peers", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
-        var url = global.HOST + ":" + req.user.port + global.API + "peers";
 
-        console.log(url);
-        request.get(url, function (err, response, body) {
+        getWebservice(req.user.port, "peers", res);
+        /*var url = global.HOST + ":" + req.user.port + global.API + "peers";
 
-            if (err) {
-                res.json(err);
-            } else {
-                res.json(JSON.parse(body));
-            }
-        });
+         console.log(url);
+         request.get(url, function (err, response, body) {
+
+         if (err) {
+         res.json(err);
+         } else {
+         res.json(JSON.parse(body));
+         }
+         });*/
     } else {
         console.log("port not found");
     }
@@ -113,8 +123,43 @@ router.get('/transactions', passport.authenticate('jwt', {session: false}), func
     });
 });
 
+router.get('/rates', passport.authenticate('jwt', {session: false}), function (req, res) {
+
+    var port = req.user.port;
+    //var port = "10005";
+    var url = global.HOST + ":" + port + global.API + "traders";
+    request.get(url, function (err, response, body) {
+        if (err) {
+            res.json(err);
+        } else {
+            var traders = JSON.parse(body);
+            if (traders) {
+                async.map(traders,
+                    function (trader, callback) {
+                        var traderUrl = global.HOST + ":" + (trader.address.hostAndPort.port + 1) + global.API + "rates";
+                        request.get(traderUrl, function (err, response, body) {
+                            if (err) {
+                                callback(err, null);
+                            }
+                            callback(null, JSON.parse(body));
+                        });
+                    },
+                    function (err, results) {
+                        if (err) {
+                            res.json(err);
+                        }
+                        res.json(results);
+                    }
+                )
+            }
+        }
+    });
+});
+
+
 router.get("/transactions-corda", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
+
         var url = global.HOST + ":" + req.user.port + global.API + "vault";
 
         console.log(url);
@@ -131,5 +176,19 @@ router.get("/transactions-corda", passport.authenticate('jwt', {session: false})
     }
 });
 
+
+function getWebservice(port, path, res) {
+    var url = global.HOST + ":" + port + global.API + path;
+
+    console.log(url);
+    request.get(url, function (err, response, body) {
+
+        if (err) {
+            res.json(err);
+        } else {
+            res.json(JSON.parse(body));
+        }
+    });
+}
 
 module.exports = router;

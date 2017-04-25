@@ -1,0 +1,35 @@
+<div class="widgets">
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <div ba-panel ba-panel-title="Currency Rates" ba-panel-class="with-scroll">
+                <div class="horizontal-scroll">
+
+                    <table class="table" st-table="smartTableData">
+                        <thead>
+                        <tr class="sortable">
+                            <th st-sort="date">From</th>
+                            <th st-sort="sender">To</th>
+                            <th st-sort="receiver">Rate</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="rate in rates">
+                            <td>{{rate.from}}</td>
+                            <td>{{rate.to}}</td>
+                            <td>{{rate.rate}} %</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div st-pagination="" st-items-by-page="smartTablePageSize"
+                                     st-displayed-pages="5"></div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

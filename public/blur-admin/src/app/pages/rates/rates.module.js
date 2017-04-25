@@ -13,6 +13,8 @@
         $stateProvider
             .state('rates', {
                 url: '/rates',
+                template: '<ui-view  autoscroll="true" autoscroll-body-top></ui-view>',
+                abstract: true,
                 title: 'Rates',
                 sidebarMeta: {
                     icon: 'ion-stats-bars',
@@ -21,6 +23,8 @@
             })
             .state('rates.view', {
                 url: '/view',
+                templateUrl: 'app/pages/rates/view/view.html',
+                controller: 'ViewCtrl',
                 title: 'View',
                 sidebarMeta: {
                     order: 100

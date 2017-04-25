@@ -1,7 +1,3 @@
-/**
- * @author v.lugovksy
- * created on 16.12.2015
- */
 (function () {
     'use strict';
 
@@ -16,6 +12,7 @@
         $scope.smartTablePageSize = 10;
 
         $http.get('http://localhost:3000/banks/transactions').then(
+        //$http.get('http://localhost:3000/banks/rates').then(
             function success(response) {
                 $scope.transactions = response.data;
                 console.log(response);
