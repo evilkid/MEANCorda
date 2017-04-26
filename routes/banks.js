@@ -341,7 +341,6 @@ router.get('/exchange/:peerName/:amount/:currency', passport.authenticate('jwt',
     }
 });
 
-
 router.get('/rates/:from/:to/:rate', passport.authenticate('jwt', {session: false}), function (req, res) {
     var from = req.params.from;
     var to = req.params.to;
