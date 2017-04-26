@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    angular.module('BlurAdmin.pages.transactions', [])
+    angular.module('BlurAdmin.pages.transactions', ['ui.select'])
         .config(routeConfig);
 
     /** @ngInject */
@@ -23,6 +23,8 @@
             })
             .state('transactions.issue', {
                 url: '/issue',
+                templateUrl: 'app/pages/transactions/issue/issue.html',
+                controller: 'IssueCtrl',
                 title: 'Issue',
                 sidebarMeta: {
                     order: 100
@@ -30,6 +32,8 @@
             })
             .state('transactions.pay', {
                 url: '/pay',
+                templateUrl: 'app/pages/transactions/pay/pay.html',
+                controller: 'PayCtrl',
                 title: 'Pay',
                 sidebarMeta: {
                     order: 200
@@ -37,6 +41,8 @@
             })
             .state('transactions.exchange', {
                 url: '/exchange',
+                templateUrl: 'app/pages/transactions/exchange/exchange.html',
+                controller: 'ExchangeCtrl',
                 title: 'Exchange',
                 sidebarMeta: {
                     order: 300
@@ -44,6 +50,8 @@
             })
             .state('transactions.exit', {
                 url: '/exit',
+                templateUrl: 'app/pages/transactions/exit/exit.html',
+                controller: 'ExitCtrl',
                 title: 'Exit',
                 sidebarMeta: {
                     order: 400

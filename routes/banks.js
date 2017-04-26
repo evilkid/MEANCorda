@@ -9,13 +9,14 @@ var async = require('async');
 
 
 var Bank = mongoose.model('banks');
+var Transaction = mongoose.model('transactions');
+
 var jwt = require('jsonwebtoken');
 var passport = require("passport");
 var jwtOptions = {
     jwtFromRequest: require("passport-jwt").ExtractJwt.fromAuthHeader(),
     secretOrKey: 'mykey'
 };
-
 
 router.post('/login', function (req, res, next) {
 
@@ -69,7 +70,6 @@ router.get("/identity", passport.authenticate('jwt', {session: false}), function
     }
 });
 
-
 router.get("/balance", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
 
@@ -91,7 +91,6 @@ router.get("/balance", passport.authenticate('jwt', {session: false}), function 
     }
 });
 
-
 router.get("/peers", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
 
@@ -112,7 +111,6 @@ router.get("/peers", passport.authenticate('jwt', {session: false}), function (r
     }
 });
 
-//get all transactions
 router.get('/transactions', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     console.log(req.user);
@@ -156,6 +154,212 @@ router.get('/rates', passport.authenticate('jwt', {session: false}), function (r
     });
 });
 
+router.get('/pay/:peerName/:amount/:currency', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var peerName = req.params.peerName;
+    var amount = req.params.amount;
+    var currency = req.params.currency;
+
+    if (req.user.port) {
+        var url = global.HOST + ":" + req.user.port + global.API + "pay/" + peerName + "/" + amount + "/" + currency;
+
+        console.log(url);
+        request.get(url, function (err, response, body) {
+
+            if (err || response.statusCode !== 200 || body.length !== 64) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(body)
+                }
+            } else {
+                console.log(body);
+                Bank.findById(req.user._id, function (err, bank) {
+                    var tx = {
+                        idTran: body,
+                        type: "pay",
+                        amount: amount,
+                        quantity: amount,
+                        product: currency,
+                        receiver: peerName,
+                        sender: bank.name,
+                        date: new Date().toISOString().replace(/T/, ' ')
+                    };
+
+                    console.log(tx);
+                    bank.transactions.push(new Transaction(tx));
+
+                    bank.save(function (err) {
+                        if (err) {
+                            res.json(err);
+                        } else {
+                            res.json("added");
+                        }
+                    });
+                });
+            }
+        });
+    }
+});
+
+router.get('/issue/:peerName/:amount/:currency', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var peerName = req.params.peerName;
+    var amount = req.params.amount;
+    var currency = req.params.currency;
+
+    if (req.user.port) {
+        var url = global.HOST + ":" + req.user.port + global.API + "issue/" + peerName + "/" + amount + "/" + currency;
+
+        console.log(url);
+        request.get(url, function (err, response, body) {
+
+            if (err || response.statusCode !== 200 || body.length !== 64) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(body)
+                }
+            } else {
+                console.log(body);
+                Bank.findById(req.user._id, function (err, bank) {
+                    var tx = {
+                        idTran: body,
+                        type: "issue",
+                        amount: amount,
+                        quantity: amount,
+                        product: currency,
+                        receiver: peerName,
+                        sender: bank.name,
+                        date: new Date().toISOString().replace(/T/, ' ')
+                    };
+
+                    console.log(tx);
+                    bank.transactions.push(new Transaction(tx));
+
+                    bank.save(function (err) {
+                        if (err) {
+                            res.json(err);
+                        } else {
+                            res.json("added");
+                        }
+                    });
+                });
+            }
+        });
+    }
+});
+
+router.get('/exit/:amount/:currency', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var amount = req.params.amount;
+    var currency = req.params.currency;
+
+    if (req.user.port) {
+        var url = global.HOST + ":" + req.user.port + global.API + "exit/" + amount + "/" + currency;
+
+        console.log(url);
+        request.get(url, function (err, response, body) {
+
+            if (err || response.statusCode !== 200 || body.length !== 64) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(body)
+                }
+            } else {
+                console.log(body);
+                Bank.findById(req.user._id, function (err, bank) {
+                    var tx = {
+                        idTran: body,
+                        type: "exit",
+                        amount: amount,
+                        quantity: amount,
+                        product: currency,
+                        receiver: "--",
+                        sender: bank.name,
+                        date: new Date().toISOString().replace(/T/, ' ')
+                    };
+
+                    console.log(tx);
+                    bank.transactions.push(new Transaction(tx));
+
+                    bank.save(function (err) {
+                        if (err) {
+                            res.json(err);
+                        } else {
+                            res.json("added");
+                        }
+                    });
+                });
+            }
+        });
+    }
+});
+
+router.get('/exchange/:peerName/:amount/:currency', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var peerName = req.params.peerName;
+    var amount = req.params.amount;
+    var currency = req.params.currency;
+
+    if (req.user.port) {
+        var url = global.HOST + ":" + req.user.port + global.API + "exchange/" + peerName + "/" + amount + "/" + currency;
+
+        console.log(url);
+        request.get(url, function (err, response, body) {
+
+            if (err || response.statusCode !== 200 || body.length !== 64) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(body)
+                }
+            } else {
+                console.log(body);
+                Bank.findById(req.user._id, function (err, bank) {
+                    var tx = {
+                        idTran: body,
+                        type: "exchange",
+                        amount: amount,
+                        quantity: amount,
+                        product: currency,
+                        receiver: peerName,
+                        sender: bank.name,
+                        date: new Date().toISOString().replace(/T/, ' ')
+                    };
+
+                    console.log(tx);
+                    bank.transactions.push(new Transaction(tx));
+
+                    bank.save(function (err) {
+                        if (err) {
+                            res.json(err);
+                        } else {
+                            res.json("added");
+                        }
+                    });
+                });
+            }
+        });
+    }
+});
+
+
+router.get('/rates/:from/:to/:rate', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var from = req.params.from;
+    var to = req.params.to;
+    var rate = Number(req.params.rate) / 100.0;
+    if (req.user.port) {
+        var url = global.HOST + ":" + req.user.port + global.API + "rates/" + from + "/" + to + "/" + rate;
+
+        console.log(url);
+        request.get(url, function (err, response, body) {
+
+            if (err || response.statusCode !== 200) {
+                res.json(err);
+            } else {
+                res.json("added");
+            }
+        });
+    }
+});
 
 router.get("/transactions-corda", passport.authenticate('jwt', {session: false}), function (req, res) {
     if (req.user.port) {
@@ -176,14 +380,13 @@ router.get("/transactions-corda", passport.authenticate('jwt', {session: false})
     }
 });
 
-
 function getWebservice(port, path, res) {
     var url = global.HOST + ":" + port + global.API + path;
 
     console.log(url);
     request.get(url, function (err, response, body) {
 
-        if (err) {
+        if (err || response.statusCode !== 200) {
             res.json(err);
         } else {
             res.json(JSON.parse(body));

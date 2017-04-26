@@ -32,6 +32,8 @@
             })
             .state('rates.add', {
                 url: '/add',
+                templateUrl: 'app/pages/rates/add/add.html',
+                controller: 'AddCtrl',
                 title: 'Add',
                 sidebarMeta: {
                     order: 200

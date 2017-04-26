@@ -100,7 +100,7 @@ app.use(function (err, req, res, next) {
 });
 
 //global variables
-global.HOST = "http://34.248.4.27";
+global.HOST = "http://34.252.49.48";
 global.API = "/api/example/";
 
 
