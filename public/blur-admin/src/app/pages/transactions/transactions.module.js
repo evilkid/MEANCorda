@@ -9,7 +9,9 @@
         .config(routeConfig);
 
     /** @ngInject */
-    function routeConfig($stateProvider) {
+    function routeConfig($stateProvider, authProvider) {
+
+
         $stateProvider
             .state('transactions', {
                 url: '/transactions',
@@ -21,15 +23,7 @@
                     order: 100
                 }
             })
-            .state('transactions.issue', {
-                url: '/issue',
-                templateUrl: 'app/pages/transactions/issue/issue.html',
-                controller: 'IssueCtrl',
-                title: 'Issue',
-                sidebarMeta: {
-                    order: 100
-                }
-            })
+
             .state('transactions.pay', {
                 url: '/pay',
                 templateUrl: 'app/pages/transactions/pay/pay.html',
@@ -48,15 +42,6 @@
                     order: 300
                 }
             })
-            .state('transactions.exit', {
-                url: '/exit',
-                templateUrl: 'app/pages/transactions/exit/exit.html',
-                controller: 'ExitCtrl',
-                title: 'Exit',
-                sidebarMeta: {
-                    order: 400
-                }
-            })
             .state('transactions.history', {
                 url: '/history',
                 templateUrl: 'app/pages/transactions/history/history.html',
@@ -65,8 +50,40 @@
                 sidebarMeta: {
                     order: 500
                 }
-            })
-        ;
+            });
+
+        if (isIssuer(authProvider.$get().currentUser)) {
+            $stateProvider
+                .state('transactions.exit', {
+                    url: '/exit',
+                    templateUrl: 'app/pages/transactions/exit/exit.html',
+                    controller: 'ExitCtrl',
+                    title: 'Exit',
+                    sidebarMeta: {
+                        order: 400
+                    }
+                })
+                .state('transactions.issue', {
+                    url: '/issue',
+                    templateUrl: 'app/pages/transactions/issue/issue.html',
+                    controller: 'IssueCtrl',
+                    title: 'Issue',
+                    sidebarMeta: {
+                        order: 100
+                    }
+                });
+        }
+
+    }
+
+    function isIssuer(identity) {
+        if (identity && identity.advertisedServices) {
+            return identity.advertisedServices.some(function (service) {
+                return service.identity.indexOf("corda.issuer") !== -1;
+            });
+        }
+
+        return false;
     }
 
 })();

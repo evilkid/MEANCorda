@@ -18,7 +18,7 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="transaction in transactions">
-                            <td>{{transaction.date}}</td>
+                            <td>{{transaction.date|date: 'medium' }}</td>
                             <td>{{transaction.sender}}</td>
                             <td>{{transaction.receiver}}</td>
                             <td>{{transaction.product}}</td>
@@ -29,7 +29,7 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td colspan="6" class="text-center">
+                            <td colspan="7" class="text-center">
                                 <div st-pagination="" st-items-by-page="smartTablePageSize"
                                      st-displayed-pages="5"></div>
                             </td>

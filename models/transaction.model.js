@@ -9,7 +9,8 @@ var Transaction = new Schema({
     sender: String,
     date: String,
     quantity: String,
-    product: String
+    product: String,
+    notify: {type: Boolean, defaults: false}
 });
 
 module.exports = mongoose.model('transactions', Transaction);

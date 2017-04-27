@@ -9,7 +9,8 @@
         .config(routeConfig);
 
     /** @ngInject */
-    function routeConfig($stateProvider) {
+    function routeConfig($stateProvider, authProvider) {
+
         $stateProvider
             .state('rates', {
                 url: '/rates',
@@ -29,17 +30,29 @@
                 sidebarMeta: {
                     order: 100
                 }
-            })
-            .state('rates.add', {
-                url: '/add',
-                templateUrl: 'app/pages/rates/add/add.html',
-                controller: 'AddCtrl',
-                title: 'Add',
-                sidebarMeta: {
-                    order: 200
-                }
-            })
-        ;
+            });
+        if (isTrader(authProvider.$get().currentUser)) {
+            $stateProvider
+                .state('rates.add', {
+                    url: '/add',
+                    templateUrl: 'app/pages/rates/add/add.html',
+                    controller: 'AddCtrl',
+                    title: 'Add',
+                    sidebarMeta: {
+                        order: 200
+                    }
+                });
+        }
+    }
+
+    function isTrader(identity) {
+        if (identity && identity.advertisedServices) {
+            return identity.advertisedServices.some(function (service) {
+                return service.identity.indexOf("tn.fxtrader") !== -1;
+            });
+        }
+
+        return false;
     }
 
 })();

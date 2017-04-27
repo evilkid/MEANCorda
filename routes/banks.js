@@ -182,7 +182,7 @@ router.get('/pay/:peerName/:amount/:currency', passport.authenticate('jwt', {ses
                         product: currency,
                         receiver: peerName,
                         sender: bank.name,
-                        date: new Date().toISOString().replace(/T/, ' ')
+                        date: new Date().toISOString()
                     };
 
                     console.log(tx);
@@ -192,7 +192,31 @@ router.get('/pay/:peerName/:amount/:currency', passport.authenticate('jwt', {ses
                         if (err) {
                             res.json(err);
                         } else {
-                            res.json("added");
+                            Bank.findOne({'corda_id': peerName}, function (err, peerBank) {
+                                if (err) {
+                                    res.json(err);
+                                } else {
+                                    var peerTx = {
+                                        idTran: body,
+                                        type: "pay",
+                                        amount: amount,
+                                        quantity: amount,
+                                        product: currency,
+                                        receiver: peerName,
+                                        sender: bank.name,
+                                        date: new Date().toISOString(),
+                                        notify: true
+                                    };
+                                    peerBank.transactions.push(new Transaction(peerTx));
+                                    peerBank.save(function (err) {
+                                        if (err) {
+                                            res.json(err)
+                                        } else {
+                                            res.json("added");
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                 });
@@ -229,7 +253,7 @@ router.get('/issue/:peerName/:amount/:currency', passport.authenticate('jwt', {s
                         product: currency,
                         receiver: peerName,
                         sender: bank.name,
-                        date: new Date().toISOString().replace(/T/, ' ')
+                        date: new Date().toISOString()
                     };
 
                     console.log(tx);
@@ -239,7 +263,31 @@ router.get('/issue/:peerName/:amount/:currency', passport.authenticate('jwt', {s
                         if (err) {
                             res.json(err);
                         } else {
-                            res.json("added");
+                            Bank.findOne({'corda_id': peerName}, function (err, peerBank) {
+                                if (err) {
+                                    res.json(err);
+                                } else {
+                                    var peerTx = {
+                                        idTran: body,
+                                        type: "issue",
+                                        amount: amount,
+                                        quantity: amount,
+                                        product: currency,
+                                        receiver: peerName,
+                                        sender: bank.name,
+                                        date: new Date().toISOString(),
+                                        notify: true
+                                    };
+                                    peerBank.transactions.push(new Transaction(peerTx));
+                                    peerBank.save(function (err) {
+                                        if (err) {
+                                            res.json(err)
+                                        } else {
+                                            res.json("added");
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                 });
@@ -275,7 +323,7 @@ router.get('/exit/:amount/:currency', passport.authenticate('jwt', {session: fal
                         product: currency,
                         receiver: "--",
                         sender: bank.name,
-                        date: new Date().toISOString().replace(/T/, ' ')
+                        date: new Date().toISOString()
                     };
 
                     console.log(tx);
@@ -332,7 +380,31 @@ router.get('/exchange/:peerName/:amount/:currency', passport.authenticate('jwt',
                         if (err) {
                             res.json(err);
                         } else {
-                            res.json("added");
+                            Bank.findOne({'corda_id': peerName}, function (err, peerBank) {
+                                if (err) {
+                                    res.json(err);
+                                } else {
+                                    var peerTx = {
+                                        idTran: body,
+                                        type: "exchange",
+                                        amount: amount,
+                                        quantity: amount,
+                                        product: currency,
+                                        receiver: peerName,
+                                        sender: bank.name,
+                                        date: new Date().toISOString().replace(/T/, ' '),
+                                        notify: true
+                                    };
+                                    peerBank.transactions.push(new Transaction(peerTx));
+                                    peerBank.save(function (err) {
+                                        if (err) {
+                                            res.json(err)
+                                        } else {
+                                            res.json("added");
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                 });
@@ -378,6 +450,33 @@ router.get("/transactions-corda", passport.authenticate('jwt', {session: false})
         console.log("port not found");
     }
 });
+
+router.get("/notifications", passport.authenticate('jwt', {session: false}), function (req, res) {
+    Bank.findById(req.user._id, function (err, bank) {
+        var txs = bank.transactions.filter(function (tx) {
+            return tx.notify === true;
+        });
+
+        res.json(txs);
+    });
+});
+
+router.put("/notifications", passport.authenticate('jwt', {session: false}), function (req, res) {
+
+    Bank.findById(req.user._id, function (err, bank) {
+        bank.transactions.forEach(function (transaction) {
+            transaction.notify = false;
+        });
+
+        bank.markModified("transactions");
+        bank.save(function (err, bank) {
+            console.log(err);
+            console.log(bank);
+            res.end();
+        });
+    });
+});
+
 
 function getWebservice(port, path, res) {
     var url = global.HOST + ":" + port + global.API + path;
