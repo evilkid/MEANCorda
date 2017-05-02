@@ -3,30 +3,81 @@
         <div class="col-lg-12 col-md-12">
             <div ba-panel ba-panel-title="Transactions History" ba-panel-class="with-scroll">
                 <div class="horizontal-scroll">
-
-                    <table class="table" st-table="smartTableData">
+                    <div class="form-group select-page-size-wrap ">
+                        <label>Rows on page
+                            <select class="form-control selectpicker show-tick" title="Rows on page" selectpicker
+                                    ng-model="smartTablePageSize" ng-options="i for i in [5,10,15,20,25]">
+                            </select>
+                        </label>
+                    </div>
+                    <table class="table" st-table="displayedCollection" st-safe-src="transactions">
                         <thead>
                         <tr class="sortable">
-                            <th st-sort="date">Date</th>
+                            <th class="table-id" st-sort="idTran">Transaction ID</th>
+                            <th st-sort="date" st-sort-default="true">Date</th>
                             <th st-sort="sender">Sender</th>
                             <th st-sort="receiver">Receiver</th>
-                            <th st-sort="currency">Currency</th>
+                            <th st-sort="product">Currency</th>
                             <th st-sort="amount">Amount</th>
                             <th st-sort="type">Type</th>
-                            <th st-sort="tranId">Transaction ID</th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <input st-search="idTran" placeholder="Search By Transaction ID"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
+                            <th>
+                                <input st-search="date" placeholder="Search By Date"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
+                            <th>
+                                <input st-search="sender" placeholder="Search By Sender"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
+                            <th>
+                                <input st-search="receiver" placeholder="Search By Receiver"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
+                            <th>
+                                <input st-search="currency" placeholder="Search By Currency"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
+                            <th>
+                                <input st-search="amount" placeholder="Search By Amount"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
+                            <th>
+                                <input st-search="type" placeholder="Search By Type"
+                                       class="input-sm form-control search-input"
+                                       type="search"/>
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="transaction in transactions">
-                            <td>{{transaction.date|date: 'medium' }}</td>
-                            <td>{{transaction.sender}}</td>
-                            <td>{{transaction.receiver}}</td>
-                            <td>{{transaction.product}}</td>
-                            <td>{{transaction.amount}}</td>
-                            <td>{{transaction.type}}</td>
-                            <td>{{transaction.idTran}}</td>
+                        <tr ng-repeat="item in displayedCollection">
+                            <td class="table-id">{{item.idTran}}</td>
+                            <td>{{item.date|date: 'medium' }}</td>
+                            <td>{{item.sender}}</td>
+                            <td>{{item.receiver}}</td>
+                            <td>{{item.product}}</td>
+                            <td>{{item.amount}}</td>
+                            <td style="text-transform: capitalize">{{item.type}}</td>
+                        </tr>
+
+                        </tbody>
+
+                        <tbody ng-if="!displayedCollection">
+                        <tr>
+                            <td colspan="7">Loading ...</td>
                         </tr>
                         </tbody>
+
                         <tfoot>
                         <tr>
                             <td colspan="7" class="text-center">

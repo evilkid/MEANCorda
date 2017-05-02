@@ -41,8 +41,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="rate">Rate</label>
-                    <ion-slider id="rate" type="single" grid="true" min="0" max="form.currency.amount" from="0"
+                    <label for="amount">Amount</label>
+                    <input type="number" class="form-control" id="amount" name="from" placeholder="From"
+                           ng-model="form.amount" ng-change="amountInputChange()">
+
+                    <br/>
+                    <ion-slider id="amountSlider" type="single" grid="true" min="0" max="form.currency.amount" from="0"
                                 on-change='rangeChangeCallback' disable="form.currency == null">
                     </ion-slider>
                 </div>

@@ -370,7 +370,7 @@ router.get('/exchange/:peerName/:amount/:currency', passport.authenticate('jwt',
                         product: currency,
                         receiver: peerName,
                         sender: bank.name,
-                        date: new Date().toISOString().replace(/T/, ' ')
+                        date: new Date().toISOString()
                     };
 
                     console.log(tx);
@@ -392,7 +392,7 @@ router.get('/exchange/:peerName/:amount/:currency', passport.authenticate('jwt',
                                         product: currency,
                                         receiver: peerName,
                                         sender: bank.name,
-                                        date: new Date().toISOString().replace(/T/, ' '),
+                                        date: new Date().toISOString(),
                                         notify: true
                                     };
                                     peerBank.transactions.push(new Transaction(peerTx));
@@ -451,14 +451,39 @@ router.get("/transactions-corda", passport.authenticate('jwt', {session: false})
     }
 });
 
-router.get("/notifications", passport.authenticate('jwt', {session: false}), function (req, res) {
-    Bank.findById(req.user._id, function (err, bank) {
+router.get("/notifications",  function (req, res) {
+
+    Bank.aggregate([{
+            "$match": {
+                "_id": mongoose.Types.ObjectId("58efbb1a88efbf2028d2f5a7")
+            }
+        }, {
+            "$project": {
+                "transactions": {
+                    "$filter": {
+                        input: "$bank.transactions",
+                        as: 'data',
+                        cond: { "$eq": ["$$data.notify", true] }
+                    }
+                }
+            }
+        }],
+        function(err, txs) {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(txs);
+            }
+        });
+
+
+    /*Bank.findById(req.user._id, function (err, bank) {
         var txs = bank.transactions.filter(function (tx) {
             return tx.notify === true;
         });
 
         res.json(txs);
-    });
+    });*/
 });
 
 router.put("/notifications", passport.authenticate('jwt', {session: false}), function (req, res) {

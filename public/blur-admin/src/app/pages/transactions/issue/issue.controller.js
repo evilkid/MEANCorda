@@ -5,7 +5,7 @@
         .controller('IssueCtrl', IssueCtrl);
 
     /** @ngInject */
-    function IssueCtrl($scope, $http) {
+    function IssueCtrl($scope, $http, $document) {
 
         $scope.showSuccess = false;
         $scope.showError = false;
@@ -18,8 +18,10 @@
             currency: null
         };
 
-        //amount slider
         var slider = null;
+        $document.ready(function () {
+            slider = $("#amountSlider").data("ionRangeSlider");
+        });
 
         $http.get('http://localhost:3000/banks/identity').then(
             function success(response) {
@@ -75,7 +77,9 @@
                         };
 
                         if (slider) {
-                            slider.from = 0;
+                            slider.update({
+                                from: 0
+                            });
                         }
                     } else {
                         $scope.showSuccess = false;
@@ -89,9 +93,28 @@
             );
         };
 
+        $scope.amountInputChange = function () {
+            console.log(slider);
+            if ($scope.form.amount < 0) {
+                $scope.form.amount = 0;
+            }
+
+            if ($scope.form.amount > 10000) {
+                $scope.form.amount = 10000;
+            }
+
+            if (slider) {
+                slider.update({
+                    from: $scope.form.amount
+                });
+
+            }
+        };
+
         $scope.rangeChangeCallback = function (sliderObj) {
-            slider = sliderObj;
             $scope.form.amount = sliderObj.from;
+            console.log(sliderObj.from);
+            $scope.$digest();
         };
     }
 })();

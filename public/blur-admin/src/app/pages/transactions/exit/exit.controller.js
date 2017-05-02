@@ -5,7 +5,7 @@
         .controller('ExitCtrl', ExitCtrl);
 
     /** @ngInject */
-    function ExitCtrl($scope, $http) {
+    function ExitCtrl($scope, $http, $document) {
 
         $scope.showSuccess = false;
         $scope.showError = false;
@@ -16,8 +16,10 @@
             currency: null
         };
 
-        //amount slider
         var slider = null;
+        $document.ready(function () {
+            slider = $("#amountSlider").data("ionRangeSlider");
+        });
 
         $http.get('http://localhost:3000/banks/balance').then(
             function success(response) {
@@ -32,7 +34,7 @@
         );
 
 
-        $scope.sendPay = function () {
+        $scope.sendExit = function () {
             return $http.get('http://localhost:3000/banks/exit/' +
                 $scope.form.amount + '/' +
                 $scope.form.currency.currency
@@ -45,8 +47,10 @@
                         $scope.form.currency.amount = $scope.form.currency.amount - $scope.form.amount;
 
                         if (slider) {
-                            slider.max = $scope.form.currency.amount - $scope.form.amount;
-                            slider.from = 0;
+                            slider.update({
+                                max: $scope.form.currency.amount - $scope.form.amount,
+                                from: 0
+                            });
                         }
 
                         $scope.form = {
@@ -66,9 +70,27 @@
             );
         };
 
+        $scope.amountInputChange = function () {
+            console.log(slider);
+            if ($scope.form.amount < 0) {
+                $scope.form.amount = 0;
+            }
+
+            if ($scope.form.amount > $scope.form.currency.amount) {
+                $scope.form.amount = $scope.form.currency.amount;
+            }
+
+            if (slider) {
+                slider.update({
+                    from: $scope.form.amount
+                });
+
+            }
+        };
+
         $scope.rangeChangeCallback = function (sliderObj) {
-            slider = sliderObj;
             $scope.form.amount = sliderObj.from;
+            $scope.$digest();
         };
     }
 })();

@@ -5,7 +5,7 @@
         .controller('AddCtrl', AddCtrl);
 
     /** @ngInject */
-    function AddCtrl($scope, $http) {
+    function AddCtrl($scope, $http, $document) {
 
         $scope.showSuccess = false;
         $scope.showError = false;
@@ -15,6 +15,12 @@
             to: '',
             rate: 10
         };
+
+
+        var slider = null;
+        $document.ready(function () {
+            slider = $("#rateSlider").data("ionRangeSlider");
+        });
 
         $scope.addRate = function () {
             console.log($scope);
@@ -34,6 +40,13 @@
                             to: '',
                             rate: 10
                         };
+
+                        if (slider) {
+                            slider.update({
+                                from: 10
+                            });
+                        }
+
                     } else {
                         $scope.showSuccess = false;
                         $scope.showError = true;
@@ -47,8 +60,28 @@
 
         };
 
+        $scope.rateInputChange = function () {
+            console.log(slider);
+            if ($scope.form.rate < 0) {
+                $scope.form.rate = 0;
+            }
+
+            if ($scope.form.rate > 100) {
+                $scope.form.rate = 100;
+            }
+
+            if (slider) {
+                slider.update({
+                    from: $scope.form.rate
+                });
+
+                //slider.from = $scope.form.rate;
+            }
+        };
+
         $scope.rangeChangeCallback = function (sliderObj) {
             $scope.form.rate = sliderObj.from;
+            $scope.$digest();
         };
     }
 })();

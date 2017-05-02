@@ -23,7 +23,11 @@
 
                 <div class="form-group">
                     <label for="rate">Rate</label>
-                    <ion-slider id="rate" type="single" grid="true" min="0" max="100" from="10" postfix="%"
+                    <input type="number" class="form-control" id="rate" name="from" placeholder="From"
+                           ng-model="form.rate" ng-change="rateInputChange()">
+
+                    <br/>
+                    <ion-slider id="rateSlider" type="single" grid="true" min="0" max="100" from="10" postfix="%"
                                 on-change='rangeChangeCallback'>
                     </ion-slider>
                 </div>
