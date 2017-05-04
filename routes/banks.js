@@ -451,7 +451,7 @@ router.get("/transactions-corda", passport.authenticate('jwt', {session: false})
     }
 });
 
-router.get("/notifications",  function (req, res) {
+router.get("/notifications", passport.authenticate('jwt', {session: false}), function (req, res) {
     Bank.findById(req.user._id, function (err, bank) {
         var txs = bank.transactions.filter(function (tx) {
             return tx.notify === true;
