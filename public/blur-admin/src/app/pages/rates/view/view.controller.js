@@ -9,7 +9,7 @@
 
         $scope.rates = [];
 
-        $http.get('http://localhost:3000/banks/rates').then(
+        $http.get('/banks/rates').then(
             function success(response) {
                 $scope.rates = response.data[0];
                 console.log(response);

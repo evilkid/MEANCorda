@@ -16,7 +16,7 @@
 
                 if ($cookies.get("token")) {
                     $.ajax({
-                        url: "http://localhost:3000/banks/identity",
+                        url: "/banks/identity",
                         async: false,
                         headers: {
                             Authorization: "JWT " + $cookies.get("token")

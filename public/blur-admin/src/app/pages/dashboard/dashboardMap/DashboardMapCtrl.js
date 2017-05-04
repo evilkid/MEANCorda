@@ -22,7 +22,7 @@
 
 
         //getting peers
-        $http.get("http://localhost:3000/banks/peers").then(
+        $http.get("/banks/peers").then(
             function (response) {
                 $scope.peers = response.data;
 
@@ -45,7 +45,7 @@
             }
         );
 
-        //$http.get("http://localhost:3000/banks/identity").then(
+        //$http.get("/banks/identity").then(
         //function (response) {
 
         //}

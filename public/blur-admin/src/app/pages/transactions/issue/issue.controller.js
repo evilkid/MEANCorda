@@ -23,7 +23,7 @@
             slider = $("#amountSlider").data("ionRangeSlider");
         });
 
-        $http.get('http://localhost:3000/banks/identity').then(
+        $http.get('/banks/identity').then(
             function success(response) {
                 if (!( response.data.name in $scope.peers )) {
                     console.log(response.data);
@@ -46,7 +46,7 @@
             }
         );
 
-        $http.get('http://localhost:3000/banks/peers').then(
+        $http.get('/banks/peers').then(
             function success(response) {
                 console.log("first", $scope.peers);
                 $scope.peers = $scope.peers.concat(response.data);
@@ -60,7 +60,7 @@
 
 
         $scope.sendIssue = function () {
-            return $http.get('http://localhost:3000/banks/issue/' +
+            return $http.get('/banks/issue/' +
                 $scope.form.to.name + '/' +
                 $scope.form.amount + '/' +
                 $scope.form.currency

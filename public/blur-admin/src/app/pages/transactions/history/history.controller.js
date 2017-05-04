@@ -11,8 +11,8 @@
 
         $scope.smartTablePageSize = 10;
 
-        $http.get('http://localhost:3000/banks/transactions').then(
-            //$http.get('http://localhost:3000/banks/rates').then(
+        $http.get('/banks/transactions').then(
+            //$http.get('/banks/rates').then(
             function success(response) {
                 $scope.transactions = response.data;
                 console.log(response);

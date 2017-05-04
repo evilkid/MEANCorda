@@ -11,7 +11,7 @@
     /** @ngInject */
     function MsgCenterCtrl($scope, $sce, $http) {
 
-        $http.get('http://localhost:3000/banks/notifications').then(
+        $http.get('/banks/notifications').then(
             function success(response) {
                 console.log(response);
                 $scope.notifications = response.data;
@@ -46,7 +46,7 @@
         };
 
         $scope.markAsRead = function () {
-            $http.put('http://localhost:3000/banks/notifications').then(
+            $http.put('/banks/notifications').then(
                 function success(response) {
                     $scope.notifications = [];
                     console.log(response);

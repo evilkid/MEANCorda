@@ -25,7 +25,7 @@
         $scope.addRate = function () {
             console.log($scope);
 
-            return $http.get('http://localhost:3000/banks/rates/' +
+            return $http.get('/banks/rates/' +
                 $scope.form.from + '/' +
                 $scope.form.to + '/' +
                 $scope.form.rate

@@ -100,7 +100,7 @@ app.use(function (err, req, res, next) {
 });
 
 //global variables
-global.HOST = "http://34.248.111.155";
+global.HOST = "http://34.249.53.68";
 global.API = "/api/example/";
 
 module.exports = app;

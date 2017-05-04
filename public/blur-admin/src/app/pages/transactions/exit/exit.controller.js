@@ -21,7 +21,7 @@
             slider = $("#amountSlider").data("ionRangeSlider");
         });
 
-        $http.get('http://localhost:3000/banks/balance').then(
+        $http.get('/banks/balance').then(
             function success(response) {
                 for (var key in response.data) {
                     console.log(key, response.data[key]);
@@ -35,7 +35,7 @@
 
 
         $scope.sendExit = function () {
-            return $http.get('http://localhost:3000/banks/exit/' +
+            return $http.get('/banks/exit/' +
                 $scope.form.amount + '/' +
                 $scope.form.currency.currency
             ).then(

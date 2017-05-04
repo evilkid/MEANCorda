@@ -14,7 +14,7 @@
 
         $scope.currencies = [];
 
-        $http.get('http://localhost:3000/banks/balance').then(
+        $http.get('/banks/balance').then(
             function success(response) {
                 $scope.currencies = response.data;
                 console.log(response);
